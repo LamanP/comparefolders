@@ -37,6 +37,16 @@ function readFolder(folderPath: string): FolderItem[] {
     return items;
 }
 
+function compareStrings(left: string, right: string) {
+    if (left < right) {
+        return -1;
+    }
+    if (left > right) {
+        return 1;
+    }
+    return 0;
+}
+
 function compareItems(differences: Difference[], isFolder: boolean, leftContent: FolderItem[], rightContent: FolderItem[]) {
     const itemCount = Math.max(leftContent.length, rightContent.length);
     let leftIndex = 0;
@@ -45,7 +55,8 @@ function compareItems(differences: Difference[], isFolder: boolean, leftContent:
         const leftItem = leftIndex < itemCount ? leftContent[leftIndex] : null;
         const rightItem = rightIndex < itemCount ? rightContent[rightIndex] : null;
         if (leftItem && rightItem) {
-            if (path.basename(leftItem.path) === path.basename(rightItem.path)) { // File exists on both sides
+            const nameOrder = compareStrings(path.basename(leftItem.path), path.basename(rightItem.path));
+            if (nameOrder === 0) { // File exists on both sides
                 if (!isFolder && readFileSync(leftItem.path).toString() !== readFileSync(rightItem.path).toString()) {
                     differences.push({
                         kind: DifferenceKind.CONTENT,
@@ -59,7 +70,7 @@ function compareItems(differences: Difference[], isFolder: boolean, leftContent:
                 }
                 ++leftIndex;
                 ++rightIndex;
-            } else if (leftIndex < rightIndex) {
+            } else if (nameOrder < 0) {
                 differences.push({
                     isFolder,
                     kind: DifferenceKind.LEFT_ONLY,
