@@ -70,5 +70,5 @@ listDifferences(differences, DifferenceKind.RIGHT_ONLY, false);
 listDifferences(differences, DifferenceKind.CONTENT, false);
 const numBatches = createP4Files(differences);
 if (numBatches > 0) {
-    console.log(`${numBatches} batch file(s) created in ${path.resolve("./p4merge")}.`);
+    console.log(`${numBatches} batch file(s) created in ${path.resolve("./p4files")}.`);
 }
